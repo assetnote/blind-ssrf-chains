@@ -105,6 +105,7 @@ The response times are slower or faster depending on whether or not the URL you 
 **Tools**
 
 - [Gopherus](#gopherus)
+- [remote-method-guesser](#remote-method-guesser)
 - [SSRF Proxy](#ssrfproxy)
 
 ----------------------------------
