@@ -99,6 +99,7 @@ The response times are slower or faster depending on whether or not the URL you 
 - [Redis](#redis)
 - [Memcache](#memcache)
 - [Apache Tomcat](#tomcat)
+- [FastCGI](#fastcgi)
 - [Java RMI](#java-rmi)
 
 **Tools**
