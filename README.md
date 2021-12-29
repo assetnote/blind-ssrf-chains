@@ -849,3 +849,4 @@ Thank you to the following people that have contributed to this post:
 - [@vtnahira - OpenTSDB RCE](https://twitter.com/vtnahira)
 - [@fransrosen - SSRF canaries concept](https://twitter.com/fransrosen)
 - [@theabrahack - RCE via Jenkins Groovy](https://twitter.com/@theabrahack)
+- [@qtc_de - RCE via Java RMI](https://twitter.com/qtc_de)
