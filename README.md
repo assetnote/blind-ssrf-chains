@@ -815,6 +815,19 @@ This tool generates Gopher payloads for:
 - Zabbix
 - Memcache
 
+
+<div id="remote-method-guesser"></div>
+
+## remote-method-guesser
+
+- [remote-method-guesser - Github](https://github.com/qtc-de/remote-method-guesser)
+- [Blog post on SSRF usage](https://blog.tneitzel.eu/posts/01-attacking-java-rmi-via-ssrf/)
+
+*remote-method-guesser* is a *Java RMI* vulnerability scanner that supports attack operations for most common *Java RMI*
+vulnerabilities. Most of the available operations support the ``--ssrf`` option, to generate an *SSRF* payload for the
+requested operation. Together with the ``--gopher`` option, ready to use *gopher* payloads can be generated directly.
+
+
 <div id="ssrfproxy"></div>
 
 ## SSRF Proxy
